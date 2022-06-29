@@ -1,24 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { BackendErrorsInterface } from 'src/app/shared/types/backendErrors.interface';
-import { registerAction } from '../../store/actions/register.actions';
-import { isSubmittingSelector, validationErrorsSelector } from '../../store/selectors';
-import { RegisterRequest } from '../../types/registerRequest.interface';
+import {Component, OnInit} from '@angular/core'
+import {FormGroup, FormBuilder, Validators} from '@angular/forms'
+import {Store, select} from '@ngrx/store'
+import {Observable} from 'rxjs'
+
+import {registerAction} from 'src/app/auth/store/actions/register.action'
+import {
+  isSubmittingSelector,
+  validationErrorsSelector
+} from 'src/app/auth/store/selectors'
+import {RegisterRequestInterface} from 'src/app/auth/types/registerRequest.interface'
+import {BackendErrorsInterface} from 'src/app/shared/types/backendErrors.interface'
 
 @Component({
-  selector: 'app-register',
+  selector: 'mc-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  form: FormGroup
+  isSubmitting$: Observable<boolean>
+  backendErrors$: Observable<BackendErrorsInterface | null>
 
-  form: FormGroup;
-  isSubmitting$: Observable<boolean>;
-  backendErrors$: Observable<BackendErrorsInterface | null>;
-
-  constructor(private fb: FormBuilder, private store: Store) { }
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.initializeForm()
@@ -26,11 +29,12 @@ export class RegisterComponent implements OnInit {
   }
 
   initializeValues(): void {
-    this.isSubmitting$ = this.store.pipe(select(isSubmittingSelector));
+    this.isSubmitting$ = this.store.pipe(select(isSubmittingSelector))
     this.backendErrors$ = this.store.pipe(select(validationErrorsSelector))
   }
 
   initializeForm(): void {
+    console.log('initializeForm')
     this.form = this.fb.group({
       username: ['', Validators.required],
       email: ['', Validators.required],
@@ -39,10 +43,10 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const request: RegisterRequest = {
+    console.log('submit', this.form.value, this.form.valid)
+    const request: RegisterRequestInterface = {
       user: this.form.value
     }
-    this.store.dispatch(registerAction({ request }))
-    // this.authService.register(this.form.value).subscribe((currentUserr: CurrentUser) => {})
+    this.store.dispatch(registerAction({request}))
   }
 }

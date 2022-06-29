@@ -1,6 +1,6 @@
-import { GetFeedResponseInterface } from "./getFeedResponse.interface"
+import {GetFeedResponseInterface} from 'src/app/shared/modules/feed/types/getFeedResponse.interface'
 
-export class FeedStateInterface {
+export interface FeedStateInterface {
   isLoading: boolean
   error: string | null
   data: GetFeedResponseInterface | null

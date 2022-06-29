@@ -1,43 +1,59 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from 'src/environments/environment';
-import { AppRoutingModule } from './app-routing.module';
+import { BrowserModule } from '@angular/platform-browser'
+import { NgModule } from '@angular/core'
+import { StoreModule } from '@ngrx/store'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store'
 
-import { AppComponent } from './app.component';
-import { AuthComponent } from './auth/auth.component';
-import { AuthModule } from './auth/auth.module';
-import { GlobalFeedModule } from './globalFeed/globalFeed.module';
-import { TopBarModule } from './shared/modules/topBar/topBar.module';
-import { AuthIntercetor } from './shared/services/authInterceptor.service';
-import { PersistanceService } from './shared/services/persistance.service';
+import { AppRoutingModule } from './app-routing.module'
+import { AppComponent } from './app.component'
+import { AuthModule } from 'src/app/auth/auth.module'
+import { environment } from 'src/environments/environment'
+import { EffectsModule } from '@ngrx/effects'
+import { TopBarModule } from 'src/app/shared/modules/topBar/topBar.module'
+import { PersistanceService } from './shared/services/persistance.service'
+import { AuthInterceptor } from './shared/services/authinterceptor.service'
+import { GlobalFeedModule } from './globalFeed/globalFeed.module'
+import { YourFeedModule } from './yourFeed/yourFeed.module'
+import { TagFeedModule } from 'src/app/tagFeed/tagFeed.module'
+import { ArticleModule } from './article/article.module'
+import { CreateArticleModule } from './createArticle/createArticle.module'
+import { EditArticleModule } from 'src/app/editArticle/editArticle.module'
+import { SettingsModule } from './settings/settings.module'
+import { UserProfileModule } from './userProfile/userProfile.module'
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AuthComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     HttpClientModule,
+    AppRoutingModule,
     AuthModule,
-    StoreModule.forRoot({}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreModule.forRoot({ router: routerReducer }),
+    StoreRouterConnectingModule.forRoot(),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production
+    }),
     EffectsModule.forRoot([]),
     TopBarModule,
-    GlobalFeedModule
+    GlobalFeedModule,
+    YourFeedModule,
+    TagFeedModule,
+    CreateArticleModule,
+    ArticleModule,
+    EditArticleModule,
+    SettingsModule,
+    UserProfileModule
   ],
   providers: [
     PersistanceService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthIntercetor,
+      useClass: AuthInterceptor,
       multi: true
-    }],
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

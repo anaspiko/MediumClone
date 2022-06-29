@@ -1,32 +1,34 @@
-import { Injectable } from "@angular/core";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { catchError, map, of, switchMap } from "rxjs";
-import { FeedService } from "../../services/feed.service";
-import { GetFeedResponseInterface } from "../../types/getFeedResponse.interface";
-import { getFeedAction, getFeedFailureAction, getFeedSuccessAction } from "../actions/getFeed.actions";
+import {Injectable} from '@angular/core'
+import {createEffect, Actions, ofType} from '@ngrx/effects'
+import {map, catchError, switchMap} from 'rxjs/operators'
+import {of} from 'rxjs'
+
+import {FeedService} from 'src/app/shared/modules/feed/services/feed.service'
+import {
+  getFeedAction,
+  getFeedSuccessAction,
+  getFeedFailureAction
+} from 'src/app/shared/modules/feed/store/actions/getFeed.action'
+import {GetFeedResponseInterface} from 'src/app/shared/modules/feed/types/getFeedResponse.interface'
 
 @Injectable()
 export class GetFeedEffect {
-
   getFeed$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getFeedAction),
-      switchMap(({ url }) => {
-
+      switchMap(({url}) => {
         return this.feedService.getFeed(url).pipe(
           map((feed: GetFeedResponseInterface) => {
-            return getFeedSuccessAction({ feed })
+            return getFeedSuccessAction({feed})
           }),
+
           catchError(() => {
             return of(getFeedFailureAction())
           })
         )
       })
-    ))
+    )
+  )
 
-  constructor(
-    private actions$: Actions,
-    private feedService: FeedService) { }
+  constructor(private actions$: Actions, private feedService: FeedService) {}
 }
-
-
